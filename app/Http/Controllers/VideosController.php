@@ -16,13 +16,9 @@ class VideosController extends Controller
         ]);
 
         $vimeoVideoLink = Vimeo::upload($valid['video'], [
-            'name' =>  'Test',
-            'description' => 'test video'
+            'name' =>  $valid['title'],
         ]);
-
         $vimeoVideoId = explode('/videos/', $vimeoVideoLink)[1];
-
-
         Videos::create(['title' => $valid['title'], 'video_id' =>  $vimeoVideoId]);
         return back()->with('success', 'Uploaded Successfully!');
     }
