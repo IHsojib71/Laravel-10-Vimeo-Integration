@@ -1,7 +1,9 @@
 <?php
 
-use App\Http\Controllers\VimeoController;
+use App\Http\Controllers\VideosController;
+use App\Models\Vimeo;
 use Illuminate\Support\Facades\Route;
+use App\Models\Videos;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +17,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $videos = Videos::all();
+    return view('welcome',['videos' => $videos]);
 });
 
-Route::post('vimeo/upload', [VimeoController::class,'UploadToVimeo'])->name('upload.video');
+Route::post('vimeo/upload', [VideosController::class,'UploadToVimeo'])->name('upload.video');
+Route::get('watch/video/{video}', [VideosController::class,'watchVideo'])->name('watch.video');

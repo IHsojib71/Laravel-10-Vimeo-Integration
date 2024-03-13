@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>Vimeo Video Uploader</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
@@ -31,6 +31,15 @@
                             </div>
                             <div class="modal-body">
                                 <div>
+                                    <label for="formFileLg" class="form-label">Video Title</label>
+                                    <input class="form-control form-control-lg" name="title" type="text"
+                                        placeholder="Video Title">
+                                </div>
+                                @error('title')
+                                    <p class="text-danger">{{ $message }}</p>
+                                @enderror
+
+                                <div>
                                     <label for="formFileLg" class="form-label">Select Video</label>
                                     <input class="form-control form-control-lg" name="video" type="file">
                                 </div>
@@ -53,31 +62,32 @@
         @enderror
         <table class="table">
             <thead>
-                <tr>
+                <tr class="text-center">
                     <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td colspan="2">Larry the Bird</td>
-                    <td>@twitter</td>
-                </tr>
+                @forelse ($videos as $video)
+                    <tr class="text-center">
+                        <th scope="row">{{ $loop->index + 1 }}</th>
+                        <td>{{ $video->title }}</td>
+                        <td>
+                            <a href="{{ route('watch.video',$video->id) }}">
+
+                            <button class="btn btn-info">Watch</button>
+                            </a>
+                        </td>
+
+                    </tr>
+                @empty
+                    <tr class="text-center">
+                        <td colspan="3">No Videos Uploaded!</td>
+                    </tr>
+                @endforelse
+
+
             </tbody>
         </table>
     </div>
