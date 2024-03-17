@@ -14,14 +14,27 @@ class VideosController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'video' => ['required', 'file', 'mimes:mp4,mkv,3gb,avi,flv,webm,mov']
         ]);
-        //privacy only video can be watched from embedded ifram
-        $vimeoVideoLink = Vimeo::upload($valid['video'], [
-            'name' =>  $valid['title'],
-            'privacy' => ['view' => 'embed'],
-            'folder' => '19872628',
-        ]);
-        $vimeoVideoId = explode('/videos/', $vimeoVideoLink)[1];
-        Videos::create(['title' => $valid['title'], 'video_id' =>  $vimeoVideoId]);
+
+        $folderID = self::findFolder('Laravel');
+        if($folderID) {
+            $vimeoVideoId =  self::uploadVideoToFolder($valid['title'], $valid['video'], $folderID, 'anybody');
+            Videos::create(['title' => $valid['title'], 'video_id' =>  $vimeoVideoId]);
+        }
+        else{
+            $folderID = self::createFolder('Laravel');
+            $vimeoVideoId = self::uploadVideoToFolder($valid['title'], $valid['video'], $folderID, 'anybody');
+            Videos::create(['title' => $valid['title'], 'video_id' =>  $vimeoVideoId]);
+        }
+
+
+        //privacy only video can be watched from embedded iframe
+//        $vimeoVideoLink = Vimeo::upload($valid['video'], [
+//            'name' =>  $valid['title'],
+//            'privacy' => ['view' => 'public'],
+//            'folder' => '19872628',
+//        ]);
+//        $vimeoVideoId = explode('/videos/', $vimeoVideoLink)[1];
+//        Videos::create(['title' => $valid['title'], 'video_id' =>  $vimeoVideoId]);
         return back()->with('success', 'Uploaded Successfully!');
     }
 
@@ -34,23 +47,24 @@ class VideosController extends Controller
     {
         $folderId = null;
         // Make a request to get the list of user's folders
-        $response = Vimeo::request('/me/projects', ['per_page' => 400], 'GET');
+        $response = Vimeo::request('/me/projects', ['per_page' => 100], 'GET');
         // Iterate through the response to find the desired folder by name
         $folders = $response['body']['data'];
-        foreach ($folders as $folder) {
-            if ($folder['name'] === $folderName) {
-                $folderId = $folder['uri'];
-                break;
+        if(count($folders))
+            foreach ($folders as $folder) {
+                if ($folder['name'] === $folderName) {
+                    $folderId = $folder['uri'];
+                    break;
+                }
             }
-        }
-        return $folderId;
+        return basename($folderId);
     }
 
     public static function createFolder(string $folderName)
     {
         $response = Vimeo::request('/me/projects', ['name' => $folderName], 'POST');
         $folderId = $response['body']['uri'];
-        return $folderId;
+        return basename($folderId);
     }
 
     public static function findProject(string $projectName)
@@ -115,8 +129,7 @@ class VideosController extends Controller
             'privacy' => ['view' => $privacyName],
             'folder' => $folderID,
         ]);
-        $vimeoVideoId = explode('/videos/', $vimeoVideoLink)[1];
-        return $vimeoVideoId;
+        return  explode('/videos/', $vimeoVideoLink)[1];
     }
 
     public static function uploadVideoToRoot(string $videoTitle, string $videoPath, string $privacyName)
@@ -125,8 +138,7 @@ class VideosController extends Controller
             'name' =>  $videoTitle,
             'privacy' => ['view' => $privacyName],
         ]);
-        $vimeoVideoId = explode('/videos/', $vimeoVideoLink)[1];
-        return $vimeoVideoId;
+        return explode('/videos/', $vimeoVideoLink)[1];
     }
 
     public static function deleteFolderByID(string $folderID)
