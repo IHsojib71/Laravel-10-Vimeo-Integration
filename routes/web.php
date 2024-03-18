@@ -24,5 +24,6 @@ Route::get('/', function () {
 Route::post('vimeo/upload', [VideosController::class,'UploadToVimeo'])->name('upload.video');
 Route::get('watch/video/{video}', [VideosController::class,'watchVideo'])->name('watch.video');
 
+Route::get('delete-video', [VideosController::class,'deleteSpecificVideo']);
 
 

@@ -14,7 +14,6 @@ class VideosController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'video' => ['required', 'file', 'mimes:mp4,mkv,3gb,avi,flv,webm,mov']
         ]);
-
         $folderID = self::findFolder('Laravel');
         if($folderID) {
             $vimeoVideoId =  self::uploadVideoToFolder($valid['title'], $valid['video'], $folderID, 'anybody');
@@ -25,16 +24,6 @@ class VideosController extends Controller
             $vimeoVideoId = self::uploadVideoToFolder($valid['title'], $valid['video'], $folderID, 'anybody');
             Videos::create(['title' => $valid['title'], 'video_id' =>  $vimeoVideoId]);
         }
-
-
-        //privacy only video can be watched from embedded iframe
-//        $vimeoVideoLink = Vimeo::upload($valid['video'], [
-//            'name' =>  $valid['title'],
-//            'privacy' => ['view' => 'public'],
-//            'folder' => '19872628',
-//        ]);
-//        $vimeoVideoId = explode('/videos/', $vimeoVideoLink)[1];
-//        Videos::create(['title' => $valid['title'], 'video_id' =>  $vimeoVideoId]);
         return back()->with('success', 'Uploaded Successfully!');
     }
 
@@ -107,8 +96,9 @@ class VideosController extends Controller
         }
     }
 
-    public static function deleteSpecificVideo(string $videoID)
+    public static function deleteSpecificVideo(string $videoID='19916573')
     {
+
         // Make a DELETE request to delete the video
         $response = Vimeo::request("/videos/{$videoID}", [], 'DELETE');
         // Check if the request was successful and no content
@@ -127,7 +117,7 @@ class VideosController extends Controller
         $vimeoVideoLink = Vimeo::upload($videoPath, [
             'name' =>  $videoTitle,
             'privacy' => ['view' => $privacyName],
-            'folder' => $folderID,
+            'folder_id' => $folderID,
         ]);
         return  explode('/videos/', $vimeoVideoLink)[1];
     }
