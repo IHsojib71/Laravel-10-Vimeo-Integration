@@ -22,8 +22,16 @@ class VideoRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'folder_id' => ['required'],
             'title' => ['required', 'string', 'max:255'],
             'video' => ['required', 'file', 'mimes:mp4,mkv,3gb,avi,flv,webm,mov']
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+          'folder_id.required' => 'The folder field is required.'
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\FolderController;
 use App\Http\Controllers\VideosController;
+use App\Models\Folder;
 use App\Models\Vimeo;
 use Illuminate\Support\Facades\Route;
 use App\Models\Videos;
@@ -19,9 +20,10 @@ use App\Models\Videos;
 
 Route::get('/', function () {
     $videos = Videos::paginate(10);
-    return view('welcome',['videos' => $videos]);
+    $folders = Folder::query()->orderBy('title', 'asc')->get();
+    return view('welcome',compact('videos', 'folders'));
 });
-Route::resource('folder', FolderController::class);
+Route::resource('folder', FolderController::class)->except('show');
 Route::post('vimeo/upload', [VideosController::class,'UploadToVimeo'])->name('upload.video');
 Route::get('watch/video/{video}', [VideosController::class,'watchVideo'])->name('watch.video');
 Route::get('delete-video/{video}', [VideosController::class,'deleteVideo'])->name('delete.video');

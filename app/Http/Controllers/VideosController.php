@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\VideoRequest;
+use App\Models\Folder;
 use App\Models\Videos;
 use App\Services\VimeoService;
 use Illuminate\Http\Request;
@@ -13,16 +14,16 @@ class VideosController extends Controller
     public function UploadToVimeo(VideoRequest $request)
     {
         $valid = $request->validated();
-
-        $folderID = VimeoService::findFolder('Laravel');
+        $folder = Folder::find($valid['folder_id']);
+        $folderID = VimeoService::findFolder($folder->title);
         if($folderID) {
             $vimeoVideoId =  VimeoService::uploadVideoToFolder($valid['title'], $valid['video'], $folderID, 'anybody');
-            Videos::create(['title' => $valid['title'], 'video_id' =>  $vimeoVideoId]);
+            Videos::create(['folder_id'=> $valid['folder_id'],'title' => $valid['title'], 'video_id' =>  $vimeoVideoId]);
         }
         else{
-            $folderID = VimeoService::createFolder('Laravel');
+            $folderID = VimeoService::createFolder($folder->title);
             $vimeoVideoId = VimeoService::uploadVideoToFolder($valid['title'], $valid['video'], $folderID, 'anybody');
-            Videos::create(['title' => $valid['title'], 'video_id' =>  $vimeoVideoId]);
+            Videos::create(['folder_id'=> $valid['folder_id'],'title' => $valid['title'], 'video_id' =>  $vimeoVideoId]);
         }
         return back()->with('success', 'Uploaded Successfully!');
     }
