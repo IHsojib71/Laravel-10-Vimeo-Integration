@@ -73,11 +73,13 @@
                     <tr class="text-center">
                         <th scope="row">{{ $loop->index + 1 }}</th>
                         <td>{{ $video->title }}</td>
-                        <td>
+                        <td class="d-flex">
                             <a href="{{ route('watch.video',$video->id) }}">
 
-                            <button class="btn btn-info">Watch</button>
+                            <button class="btn btn-info mx-2">Watch</button>
                             </a>
+
+                            <a href="{{route('delete.video',$video->id)}}"><button class="btn btn-danger">Delete</button></a>
                         </td>
 
                     </tr>
@@ -90,6 +92,10 @@
 
             </tbody>
         </table>
+
+        <div>
+            {{ $videos->links()  }}
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

@@ -27,6 +27,16 @@ class VideosController extends Controller
         return back()->with('success', 'Uploaded Successfully!');
     }
 
+    public function deleteVideo(Videos $video)
+    {
+        if(self::deleteSpecificVideo($video->video_id)) {
+            $video->delete();
+            return back()->with('success', 'Video Deleted Successfully!');
+        }
+        else
+            return back()->with('error', 'Something went wrong!');
+    }
+
     public function watchVideo(Videos $video)
     {
         return view('watch-video', compact('video'));
@@ -96,9 +106,8 @@ class VideosController extends Controller
         }
     }
 
-    public static function deleteSpecificVideo(string $videoID='19916573')
+    public static function deleteSpecificVideo(string $videoID)
     {
-
         // Make a DELETE request to delete the video
         $response = Vimeo::request("/videos/{$videoID}", [], 'DELETE');
         // Check if the request was successful and no content
