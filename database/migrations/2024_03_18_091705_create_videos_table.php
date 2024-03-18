@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('vimeos', function (Blueprint $table) {
+        Schema::create('videos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('folder_id')->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->string('video_id');
             $table->timestamps();
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('vimeos');
+        Schema::dropIfExists('videos');
     }
 };
