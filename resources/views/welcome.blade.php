@@ -2,11 +2,8 @@
 @section('content')
     <div class="col-8 mx-auto mt-4">
         <div>
-
-
             <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                 aria-hidden="true">
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <form action="{{ route('upload.video') }}" method="POST" enctype="multipart/form-data">
                         @csrf
@@ -14,7 +11,7 @@
                             <div class="modal-header">
                                 <h1 class="modal-title fs-5" id="exampleModalLabel">Vimeo Uploader</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
+                                    aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
 
@@ -23,23 +20,23 @@
                                     <select class="form-control form-control-lg" name="folder_id">
                                         <option value="">Select Folder</option>
                                         @forelse($folders as $folder)
-                                            <option value="{{$folder->id}}">{{ $folder->title }}</option>
-                                            @empty
+                                            <option value="{{ $folder->id }}">{{ $folder->title }}</option>
+                                        @empty
                                             <option value="">No folders found!</option>
                                         @endforelse
                                     </select>
                                 </div>
                                 @error('folder')
-                                <p class="text-danger">{{ $message }}</p>
+                                    <p class="text-danger">{{ $message }}</p>
                                 @enderror
 
                                 <div>
                                     <label for="formFileLg" class="form-label">Video Title</label>
                                     <input class="form-control form-control-lg" name="title" type="text"
-                                           placeholder="Video Title">
+                                        placeholder="Video Title">
                                 </div>
                                 @error('title')
-                                <p class="text-danger">{{ $message }}</p>
+                                    <p class="text-danger">{{ $message }}</p>
                                 @enderror
 
                                 <div>
@@ -47,7 +44,7 @@
                                     <input class="form-control form-control-lg" name="video" type="file">
                                 </div>
                                 @error('video')
-                                <p class="text-danger">{{ $message }}</p>
+                                    <p class="text-danger">{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -61,14 +58,31 @@
             </div>
         </div>
         @error('video')
-        <div class="alert alert-danger">{{ $message }}</div>
+            <div class="alert alert-danger">{{ $message }}</div>
         @enderror
         <div class="text-center">
             <h1>My Videos</h1>
         </div>
+
+        <form action="{{ route('delete.folder') }}" method="POST">
+            @csrf
+            <div class="d-flex justify-content-between col-6 mb-2">
+                <select class="form-control form-control-lg" name="folder_id" required>
+                    <option value="">Select Folder</option>
+                    @forelse($folders as $folder)
+                        <option value="{{ $folder->id }}">{{ $folder->title }}</option>
+                    @empty
+                        <option value="">No folders found!</option>
+                    @endforelse
+                </select>
+                <button type="submit" class="btn btn-danger mx-2">Delete Folder & Videos</button>
+            </div>
+        </form>
+
         <div class="d-flex justify-content-between">
 
-            <a href="{{route('folder.index')}}"><button class="btn btn-info">My Folders</button></a>
+            <a href="{{ route('folder.index') }}"><button class="btn btn-info">My Folders</button></a>
+
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-success m-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 Upload Video
@@ -77,44 +91,40 @@
         </div>
         <table class="table">
             <thead>
-            <tr class="text-center">
-                <th scope="col">#</th>
-                <th scope="col">Title</th>
-                <th scope="col">Folder</th>
-                <th scope="col">Action</th>
-            </tr>
+                <tr class="text-center">
+                    <th scope="col">#</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Folder</th>
+                    <th scope="col">Action</th>
+                </tr>
             </thead>
             <tbody>
-            @forelse ($videos as $video)
-                <tr class="text-center">
-                    <th scope="row">{{ $loop->index + 1 }}</th>
-                    <td>{{ $video->title }}</td>
-                    <td>{{ $video->folder->title }}</td>
-                    <td>
-                        <a href="{{ route('watch.video',$video->id) }}">
+                @forelse ($videos as $video)
+                    <tr class="text-center">
+                        <th scope="row">{{ $loop->index + 1 }}</th>
+                        <td>{{ $video->title }}</td>
+                        <td>{{ $video->folder->title }}</td>
+                        <td>
+                            <a href="{{ route('watch.video', $video->id) }}">
+                                <button class="btn btn-info mx-2">Watch</button>
+                            </a>
+                            <a href="{{ route('delete.video', $video->id) }}"><button
+                                    class="btn btn-danger">Delete</button></a>
+                        </td>
 
-                            <button class="btn btn-info mx-2">Watch</button>
-                        </a>
-
-                        <a href="{{route('delete.video',$video->id)}}"><button class="btn btn-danger">Delete</button></a>
-                    </td>
-
-                </tr>
-            @empty
-                <tr class="text-center">
-                    <td colspan="3">No Videos Uploaded!</td>
-                </tr>
-            @endforelse
+                    </tr>
+                @empty
+                    <tr class="text-center">
+                        <td colspan="4">No Videos Uploaded!</td>
+                    </tr>
+                @endforelse
 
 
             </tbody>
         </table>
 
         <div>
-            {{ $videos->links()  }}
+            {{ $videos->links() }}
         </div>
     </div>
 @endsection
-
-
-

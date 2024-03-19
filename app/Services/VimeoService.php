@@ -121,7 +121,7 @@ class VimeoService
         }
     }
 
-    public static function deleteFolderWithVideos(string $folderID)
+    public static function deleteFolderVideos(string $folderID)
     {
         // 1. Retrieve videos in the folder
         $response = Vimeo::request("/me/projects/{$folderID}/videos", ['per_page' => 100], 'GET');
@@ -131,7 +131,7 @@ class VimeoService
             // 2. Delete each video
             foreach ($videos as $video) {
                 $videoId = substr($video['uri'], strrpos($video['uri'], '/') + 1);
-                self::deleteSpecificVideo($videoId); // Assuming you have a method to delete a video
+                self::deleteSpecificVideo($videoId); // method to delete a video
             }
         }
     }
