@@ -59,6 +59,6 @@ class VideosController extends Controller
     public function createSubFolder()
     {
         $folderID = VimeoService::findFolder('Laravel');
-        VimeoService::createSubfolder($folderID, 'api');
+        return VimeoService::createSubfolder($folderID, 'Vue');
     }
 }

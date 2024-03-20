@@ -10,7 +10,18 @@
 </head>
 
 <body>
-
+<div class="m-12">
+    @session('success')
+    <div class="bg-success text-white">
+        {{ $value }}
+    </div>
+    @endsession
+    @session('error')
+    <div class="bg-danger text-white">
+        {{ $value }}
+    </div>
+    @endsession
+</div>
     @yield('content')
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

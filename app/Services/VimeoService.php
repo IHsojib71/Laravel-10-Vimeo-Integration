@@ -6,6 +6,12 @@ use Vimeo\Laravel\Facades\Vimeo;
 class VimeoService
 {
 //    my custom reusable static functions for vimeo operations
+
+    /**
+     * Finding a folder by name and return folder id
+     * @param string $folderName
+     * @return string
+     */
     public static function findFolder(string $folderName)
     {
         $folderId = null;
@@ -23,6 +29,11 @@ class VimeoService
         return basename($folderId);
     }
 
+    /**
+     * Creating a folder of given folder name and return folder id
+     * @param string $folderName
+     * @return string
+     */
     public static function createFolder(string $folderName)
     {
         $response = Vimeo::request('/me/projects', ['name' => $folderName], 'POST');
@@ -30,6 +41,12 @@ class VimeoService
         return basename($folderId);
     }
 
+
+    /**
+     * Finding project by project name
+     * @param string $projectName
+     * @return mixed|void|null
+     */
     public static function findProject(string $projectName)
     {
         $projectId = null;
@@ -51,13 +68,18 @@ class VimeoService
     }
 
 
+    /**
+     * Creating sub folder under a folder
+     * @param string $parentFolderID
+     * @param string $subfolderName
+     * @return mixed|null
+     */
     public static function createSubfolder(string $parentFolderID, string $subfolderName)
     {
         // Make a POST request to create the subfolder
-        $response = Vimeo::request("/me/projects/{$parentFolderID}/projects", array(
+        $response = Vimeo::request("/me/projects/{$parentFolderID}/folders", [
             'name' => $subfolderName,
-        ), 'POST');
-
+        ], 'POST');
         // Check if the request was successful
         if ($response['status'] === 201) {
             // Subfolder (project) created successfully
@@ -66,10 +88,15 @@ class VimeoService
             // Handle errors
             $errorMessage = $response['body']['error'];
             // Handle error
-            return null;
+            return $errorMessage;
         }
     }
 
+    /**
+     * Delete a specific video by video id
+     * @param string $videoID
+     * @return bool
+     */
     public static function deleteSpecificVideo(string $videoID)
     {
         // Make a DELETE request to delete the video
@@ -85,6 +112,15 @@ class VimeoService
             return false;
         }
     }
+
+    /**
+     * Uploading a video inside a folder
+     * @param string $videoTitle
+     * @param string $videoPath
+     * @param string $folderID
+     * @param string $privacyName
+     * @return string
+     */
     public static function uploadVideoToFolder(string $videoTitle, string $videoPath, string $folderID, string $privacyName)
     {
         $vimeoVideoLink = Vimeo::upload($videoPath, [
@@ -95,6 +131,13 @@ class VimeoService
         return  explode('/videos/', $vimeoVideoLink)[1];
     }
 
+    /**
+     * Upload a video to root
+     * @param string $videoTitle
+     * @param string $videoPath
+     * @param string $privacyName
+     * @return string
+     */
     public static function uploadVideoToRoot(string $videoTitle, string $videoPath, string $privacyName)
     {
         $vimeoVideoLink = Vimeo::upload($videoPath, [
@@ -104,6 +147,12 @@ class VimeoService
         return explode('/videos/', $vimeoVideoLink)[1];
     }
 
+
+    /**
+     * Delete a folder by its ID
+     * @param string $folderID
+     * @return bool
+     */
     public static function deleteFolderByID(string $folderID)
     {
         // Make a DELETE request to delete the folder
@@ -121,6 +170,11 @@ class VimeoService
         }
     }
 
+    /**
+     * Delete all videos inside a folder
+     * @param string $folderID
+     * @return void
+     */
     public static function deleteFolderVideos(string $folderID)
     {
         // 1. Retrieve videos in the folder
